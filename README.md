@@ -21,3 +21,8 @@ Phase 2: Core logic completed (~65%)
 ## Future Work
 - A* algorithm
 - Web interface
+
+## Team Members
+- Abhinav Benjwal (Leader)
+- Anubhav Padiyar
+- Hariom Chamoli
