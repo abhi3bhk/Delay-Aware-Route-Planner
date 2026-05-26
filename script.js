@@ -1,291 +1,492 @@
-const graph = {};
+// ================= GRAPH =================
+
+let graph = {};
+
+// ================= ADD EDGE =================
 
 function addEdge() {
 
-    const u = parseInt(document.getElementById("from").value);
-    const v = parseInt(document.getElementById("to").value);
-    const w = parseInt(document.getElementById("weight").value);
+    const from =
+        document.getElementById("fromNode").value;
 
-    if (!graph[u]) graph[u] = [];
-    if (!graph[v]) graph[v] = [];
+    const to =
+        document.getElementById("toNode").value;
 
-    graph[u].push({ node: v, weight: w });
-    graph[v].push({ node: u, weight: w });
+    const weight =
+        parseInt(
+            document.getElementById("weight").value
+        );
 
-    alert(`Edge Added: ${u} ↔ ${v} (${w})`);
+    if(!graph[from])
+        graph[from] = [];
+
+    if(!graph[to])
+        graph[to] = [];
+
+    graph[from].push({
+        node: to,
+        weight: weight
+    });
+
+    graph[to].push({
+        node: from,
+        weight: weight
+    });
+
+    showOutput(`
+        <h2>Edge Added</h2>
+        <p>${from} ⇄ ${to}
+        with weight ${weight}</p>
+    `);
+
+    displayGraph();
 }
+
+// ================= DISPLAY GRAPH =================
+
+function displayGraph() {
+
+    let html =
+        "<h2>Current Graph</h2>";
+
+    for(let node in graph) {
+
+        html += `<p><b>${node}</b> → `;
+
+        graph[node].forEach(edge => {
+
+            html += `
+                (${edge.node},
+                ${edge.weight})
+            `;
+        });
+
+        html += "</p>";
+    }
+
+    document.getElementById("graphDisplay")
+        .innerHTML = html;
+}
+
+// ================= APPLY DELAY =================
 
 function applyDelay() {
 
-    const u = parseInt(document.getElementById("delayFrom").value);
-    const v = parseInt(document.getElementById("delayTo").value);
-    const delay = parseInt(document.getElementById("delayValue").value);
+    const from =
+        document.getElementById("delayFrom").value;
 
-    if (!graph[u] || !graph[v]) {
-        alert("Edge does not exist!");
-        return;
+    const to =
+        document.getElementById("delayTo").value;
+
+    const delay =
+        parseInt(
+            document.getElementById("delayValue").value
+        );
+
+    if(graph[from]) {
+
+        graph[from].forEach(edge => {
+
+            if(edge.node == to) {
+
+                edge.weight += delay;
+            }
+        });
     }
 
-    graph[u].forEach(edge => {
-        if (edge.node === v) {
-            edge.weight += delay;
-        }
-    });
+    if(graph[to]) {
 
-    graph[v].forEach(edge => {
-        if (edge.node === u) {
-            edge.weight += delay;
-        }
-    });
+        graph[to].forEach(edge => {
 
-    alert(`Delay Applied on ${u} ↔ ${v}`);
-}
+            if(edge.node == from) {
 
-function reconstructPath(parent, dest) {
-
-    const path = [];
-
-    while (dest !== null) {
-        path.push(dest);
-        dest = parent[dest];
+                edge.weight += delay;
+            }
+        });
     }
 
-    return path.reverse().join(" → ");
+    showOutput(`
+        <h2>Delay Applied</h2>
+        <p>Delay of ${delay}
+        added between
+        ${from} and ${to}</p>
+    `);
+
+    displayGraph();
 }
 
-function measureTime(func) {
+// ================= DIJKSTRA =================
 
-    const start = performance.now();
+function dijkstra(source, destination) {
 
-    const result = func();
+    let dist = {};
+    let prev = {};
+    let visited = {};
 
-    const end = performance.now();
+    for(let node in graph) {
 
-    return {
-        result,
-        time: (end - start).toFixed(4)
-    };
-}
-
-// ---------------- DIJKSTRA ----------------
-
-function dijkstra(src, dest) {
-
-    const dist = {};
-    const visited = {};
-    const parent = {};
-
-    for (let node in graph) {
         dist[node] = Infinity;
-        visited[node] = false;
-        parent[node] = null;
+        prev[node] = null;
     }
 
-    dist[src] = 0;
+    dist[source] = 0;
 
-    while (true) {
+    while(true) {
 
         let current = null;
         let minDist = Infinity;
 
-        for (let node in dist) {
+        for(let node in dist) {
 
-            if (!visited[node] && dist[node] < minDist) {
+            if(
+                !visited[node] &&
+                dist[node] < minDist
+            ) {
+
                 minDist = dist[node];
                 current = node;
             }
         }
 
-        if (current === null) break;
+        if(current === null)
+            break;
 
         visited[current] = true;
 
         graph[current].forEach(edge => {
 
-            let newDist = dist[current] + edge.weight;
+            const neighbor = edge.node;
 
-            if (newDist < dist[edge.node]) {
+            const newDist =
+                dist[current] + edge.weight;
 
-                dist[edge.node] = newDist;
-                parent[edge.node] = current;
+            if(newDist < dist[neighbor]) {
+
+                dist[neighbor] = newDist;
+
+                prev[neighbor] = current;
             }
         });
     }
 
-    return {
-        path: reconstructPath(parent, dest),
-        distance: dist[dest]
-    };
+    return buildResult(
+        source,
+        destination,
+        dist,
+        prev
+    );
 }
 
-// ---------------- BELLMAN FORD ----------------
+// ================= BELLMAN FORD =================
 
-function bellmanFord(src, dest) {
+function bellmanFord(source, destination) {
 
-    const dist = {};
-    const parent = {};
+    let dist = {};
+    let prev = {};
 
-    for (let node in graph) {
+    for(let node in graph) {
+
         dist[node] = Infinity;
-        parent[node] = null;
+        prev[node] = null;
     }
 
-    dist[src] = 0;
+    dist[source] = 0;
 
-    const edges = [];
+    const nodes = Object.keys(graph);
 
-    for (let u in graph) {
+    for(let i=0;i<nodes.length-1;i++) {
 
-        graph[u].forEach(edge => {
-            edges.push([u, edge.node, edge.weight]);
-        });
+        for(let u in graph) {
+
+            graph[u].forEach(edge => {
+
+                const v = edge.node;
+                const w = edge.weight;
+
+                if(
+                    dist[u] !== Infinity &&
+                    dist[u] + w < dist[v]
+                ) {
+
+                    dist[v] = dist[u] + w;
+
+                    prev[v] = u;
+                }
+            });
+        }
     }
 
-    for (let i = 0; i < Object.keys(graph).length - 1; i++) {
-
-        edges.forEach(edge => {
-
-            const [u, v, w] = edge;
-
-            if (dist[u] !== Infinity &&
-                dist[u] + w < dist[v]) {
-
-                dist[v] = dist[u] + w;
-                parent[v] = u;
-            }
-        });
-    }
-
-    return {
-        path: reconstructPath(parent, dest),
-        distance: dist[dest]
-    };
+    return buildResult(
+        source,
+        destination,
+        dist,
+        prev
+    );
 }
 
-// ---------------- A* ----------------
+// ================= A* =================
 
-function heuristic(a, b) {
-    return Math.abs(a - b);
-}
+function aStar(source, destination) {
 
-function aStar(src, dest) {
+    let dist = {};
+    let prev = {};
+    let visited = {};
 
-    const openSet = [src];
+    for(let node in graph) {
 
-    const gScore = {};
-    const fScore = {};
-    const parent = {};
-
-    for (let node in graph) {
-        gScore[node] = Infinity;
-        fScore[node] = Infinity;
-        parent[node] = null;
+        dist[node] = Infinity;
+        prev[node] = null;
     }
 
-    gScore[src] = 0;
-    fScore[src] = heuristic(src, dest);
+    dist[source] = 0;
 
-    while (openSet.length > 0) {
+    while(true) {
 
-        let current = openSet[0];
+        let current = null;
+        let minScore = Infinity;
 
-        for (let node of openSet) {
+        for(let node in dist) {
 
-            if (fScore[node] < fScore[current]) {
+            const heuristic =
+                Math.abs(
+                    parseInt(destination) -
+                    parseInt(node)
+                );
+
+            const score =
+                dist[node] + heuristic;
+
+            if(
+                !visited[node] &&
+                score < minScore
+            ) {
+
+                minScore = score;
                 current = node;
             }
         }
 
-        if (current == dest) {
+        if(current === null)
+            break;
 
-            return {
-                path: reconstructPath(parent, dest),
-                distance: gScore[dest]
-            };
-        }
+        if(current == destination)
+            break;
 
-        openSet.splice(openSet.indexOf(current), 1);
+        visited[current] = true;
 
         graph[current].forEach(edge => {
 
-            const tentative =
-                gScore[current] + edge.weight;
+            const neighbor = edge.node;
 
-            if (tentative < gScore[edge.node]) {
+            const newDist =
+                dist[current] + edge.weight;
 
-                parent[edge.node] = current;
+            if(newDist < dist[neighbor]) {
 
-                gScore[edge.node] = tentative;
+                dist[neighbor] = newDist;
 
-                fScore[edge.node] =
-                    tentative +
-                    heuristic(edge.node, dest);
-
-                if (!openSet.includes(edge.node.toString())) {
-                    openSet.push(edge.node.toString());
-                }
+                prev[neighbor] = current;
             }
         });
     }
 
+    return buildResult(
+        source,
+        destination,
+        dist,
+        prev
+    );
+}
+
+// ================= BUILD RESULT =================
+
+function buildResult(
+    source,
+    destination,
+    dist,
+    prev
+) {
+
+    let path = [];
+
+    let current = destination;
+
+    while(current !== null) {
+
+        path.unshift(current);
+
+        current = prev[current];
+    }
+
     return {
-        path: "No Path",
-        distance: Infinity
+        path: path,
+        distance: dist[destination]
     };
 }
 
-// ---------------- RUN FUNCTIONS ----------------
+// ================= TIME MEASUREMENT =================
 
-function displayResult(name, data) {
+function measureTime(
+    algoFunction,
+    source,
+    destination
+) {
 
-    document.getElementById("output").innerText =
-        `${name}
+    const ITERATIONS = 500;
 
-Path: ${data.result.path}
+    const start =
+        performance.now();
 
-Distance: ${data.result.distance}
+    let result;
 
-Execution Time: ${data.time} ms`;
+    for(let i=0;i<ITERATIONS;i++) {
+
+        result =
+            algoFunction(
+                source,
+                destination
+            );
+    }
+
+    const end =
+        performance.now();
+
+    const avgTime =
+        (
+            (end - start)
+            / ITERATIONS
+        ).toFixed(4);
+
+    return {
+        result: result,
+        time: avgTime
+    };
 }
+
+// ================= RUN DIJKSTRA =================
 
 function runDijkstra() {
 
-    const src =
+    const source =
         document.getElementById("source").value;
 
-    const dest =
+    const destination =
         document.getElementById("destination").value;
 
-    const data =
-        measureTime(() => dijkstra(src, dest));
+    const measured =
+        measureTime(
+            dijkstra,
+            source,
+            destination
+        );
 
-    displayResult("DIJKSTRA", data);
+    const result =
+        measured.result;
+
+    showOutput(`
+        <h2>DIJKSTRA</h2>
+
+        <p>
+        <b>Path:</b>
+        ${result.path.join(" ➝ ")}
+        </p>
+
+        <p>
+        <b>Distance:</b>
+        ${result.distance}
+        </p>
+
+        <p>
+        <b>Execution Time:</b>
+        ${measured.time} ms
+        </p>
+    `);
 }
+
+// ================= RUN BELLMAN =================
 
 function runBellmanFord() {
 
-    const src =
+    const source =
         document.getElementById("source").value;
 
-    const dest =
+    const destination =
         document.getElementById("destination").value;
 
-    const data =
-        measureTime(() => bellmanFord(src, dest));
+    const measured =
+        measureTime(
+            bellmanFord,
+            source,
+            destination
+        );
 
-    displayResult("BELLMAN-FORD", data);
+    const result =
+        measured.result;
+
+    showOutput(`
+        <h2>BELLMAN-FORD</h2>
+
+        <p>
+        <b>Path:</b>
+        ${result.path.join(" ➝ ")}
+        </p>
+
+        <p>
+        <b>Distance:</b>
+        ${result.distance}
+        </p>
+
+        <p>
+        <b>Execution Time:</b>
+        ${measured.time} ms
+        </p>
+    `);
 }
+
+// ================= RUN A* =================
 
 function runAStar() {
 
-    const src =
+    const source =
         document.getElementById("source").value;
 
-    const dest =
+    const destination =
         document.getElementById("destination").value;
 
-    const data =
-        measureTime(() => aStar(src, dest));
+    const measured =
+        measureTime(
+            aStar,
+            source,
+            destination
+        );
 
-    displayResult("A* ALGORITHM", data);
+    const result =
+        measured.result;
+
+    showOutput(`
+        <h2>A* ALGORITHM</h2>
+
+        <p>
+        <b>Path:</b>
+        ${result.path.join(" ➝ ")}
+        </p>
+
+        <p>
+        <b>Distance:</b>
+        ${result.distance}
+        </p>
+
+        <p>
+        <b>Execution Time:</b>
+        ${measured.time} ms
+        </p>
+    `);
+}
+
+// ================= SHOW OUTPUT =================
+
+function showOutput(html) {
+
+    document.getElementById("output")
+        .innerHTML = html;
 }
