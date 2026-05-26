@@ -21,13 +21,20 @@ h1 {
     background: #1e1e1e;
     padding: 20px;
     margin-bottom: 20px;
-    border-radius: 10px;
+    border-radius: 12px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.4);
 }
 
 input {
     padding: 10px;
     margin: 5px;
     width: 150px;
+    border: none;
+    border-radius: 6px;
+}
+
+.buttons {
+    margin-top: 10px;
 }
 
 button {
@@ -35,9 +42,10 @@ button {
     margin: 5px;
     cursor: pointer;
     border: none;
-    border-radius: 5px;
+    border-radius: 6px;
     background: #4CAF50;
     color: white;
+    transition: 0.3s;
 }
 
 button:hover {
@@ -48,4 +56,5 @@ button:hover {
     margin-top: 10px;
     line-height: 1.8;
     white-space: pre-line;
+    font-size: 18px;
 }
