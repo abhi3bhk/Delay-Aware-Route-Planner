@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Delay-Aware Route Planner</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="container">
+
+    <h1>Delay-Aware Route Planner</h1>
+
+    <!-- Add Edge -->
+    <div class="card">
+        <h2>Add Edge</h2>
+
+        <input type="number" id="from" placeholder="From Node">
+        <input type="number" id="to" placeholder="To Node">
+        <input type="number" id="weight" placeholder="Weight">
+
+        <button onclick="addEdge()">Add Edge</button>
+    </div>
+
+    <!-- Delay -->
+    <div class="card">
+        <h2>Add Delay</h2>
+
+        <input type="number" id="delayFrom" placeholder="From Node">
+        <input type="number" id="delayTo" placeholder="To Node">
+        <input type="number" id="delayValue" placeholder="Delay">
+
+        <button onclick="applyDelay()">Apply Delay</button>
+    </div>
+
+    <!-- Route -->
+    <div class="card">
+        <h2>Find Route</h2>
+
+        <input type="number" id="source" placeholder="Source">
+        <input type="number" id="destination" placeholder="Destination">
+
+        <button onclick="runDijkstra()">Run Dijkstra</button>
+        <button onclick="runBellmanFord()">Run Bellman-Ford</button>
+    </div>
+
+    <!-- Output -->
+    <div class="card">
+        <h2>Output</h2>
+
+        <div id="output">
+            Results will appear here...
+        </div>
+    </div>
+
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
