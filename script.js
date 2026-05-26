@@ -1,5 +1,4 @@
 const graph = {};
-const nodeCount = 100;
 
 function addEdge() {
 
@@ -13,7 +12,7 @@ function addEdge() {
     graph[u].push({ node: v, weight: w });
     graph[v].push({ node: u, weight: w });
 
-    alert(`Edge added: ${u} ↔ ${v} (${w})`);
+    alert(`Edge Added: ${u} ↔ ${v} (${w})`);
 }
 
 function applyDelay() {
@@ -22,7 +21,10 @@ function applyDelay() {
     const v = parseInt(document.getElementById("delayTo").value);
     const delay = parseInt(document.getElementById("delayValue").value);
 
-    if (!graph[u]) return;
+    if (!graph[u] || !graph[v]) {
+        alert("Edge does not exist!");
+        return;
+    }
 
     graph[u].forEach(edge => {
         if (edge.node === v) {
@@ -36,7 +38,7 @@ function applyDelay() {
         }
     });
 
-    alert(`Delay added on edge ${u} ↔ ${v}`);
+    alert(`Delay Applied on ${u} ↔ ${v}`);
 }
 
 function reconstructPath(parent, dest) {
@@ -49,91 +51,6 @@ function reconstructPath(parent, dest) {
     }
 
     return path.reverse().join(" → ");
-}
-
-function dijkstra(src, dest) {
-
-    const dist = {};
-    const parent = {};
-    const visited = {};
-
-    for (let node in graph) {
-        dist[node] = Infinity;
-        parent[node] = null;
-    }
-
-    dist[src] = 0;
-
-    while (true) {
-
-        let current = null;
-        let minDist = Infinity;
-
-        for (let node in dist) {
-            if (!visited[node] && dist[node] < minDist) {
-                minDist = dist[node];
-                current = node;
-            }
-        }
-
-        if (current === null) break;
-
-        visited[current] = true;
-
-        graph[current].forEach(edge => {
-
-            const newDist = dist[current] + edge.weight;
-
-            if (newDist < dist[edge.node]) {
-                dist[edge.node] = newDist;
-                parent[edge.node] = current;
-            }
-        });
-    }
-
-    return {
-        distance: dist[dest],
-        path: reconstructPath(parent, dest)
-    };
-}
-
-function bellmanFord(src, dest) {
-
-    const dist = {};
-    const parent = {};
-
-    for (let node in graph) {
-        dist[node] = Infinity;
-        parent[node] = null;
-    }
-
-    dist[src] = 0;
-
-    const edges = [];
-
-    for (let u in graph) {
-        graph[u].forEach(edge => {
-            edges.push([u, edge.node, edge.weight]);
-        });
-    }
-
-    for (let i = 0; i < Object.keys(graph).length - 1; i++) {
-
-        edges.forEach(edge => {
-
-            const [u, v, w] = edge;
-
-            if (dist[u] + w < dist[v]) {
-                dist[v] = dist[u] + w;
-                parent[v] = u;
-            }
-        });
-    }
-
-    return {
-        distance: dist[dest],
-        path: reconstructPath(parent, dest)
-    };
 }
 
 function measureTime(func) {
@@ -150,24 +67,225 @@ function measureTime(func) {
     };
 }
 
-function runDijkstra() {
+// ---------------- DIJKSTRA ----------------
 
-    const src = document.getElementById("source").value;
-    const dest = document.getElementById("destination").value;
+function dijkstra(src, dest) {
 
-    const data = measureTime(() => dijkstra(src, dest));
+    const dist = {};
+    const visited = {};
+    const parent = {};
+
+    for (let node in graph) {
+        dist[node] = Infinity;
+        visited[node] = false;
+        parent[node] = null;
+    }
+
+    dist[src] = 0;
+
+    while (true) {
+
+        let current = null;
+        let minDist = Infinity;
+
+        for (let node in dist) {
+
+            if (!visited[node] && dist[node] < minDist) {
+                minDist = dist[node];
+                current = node;
+            }
+        }
+
+        if (current === null) break;
+
+        visited[current] = true;
+
+        graph[current].forEach(edge => {
+
+            let newDist = dist[current] + edge.weight;
+
+            if (newDist < dist[edge.node]) {
+
+                dist[edge.node] = newDist;
+                parent[edge.node] = current;
+            }
+        });
+    }
+
+    return {
+        path: reconstructPath(parent, dest),
+        distance: dist[dest]
+    };
+}
+
+// ---------------- BELLMAN FORD ----------------
+
+function bellmanFord(src, dest) {
+
+    const dist = {};
+    const parent = {};
+
+    for (let node in graph) {
+        dist[node] = Infinity;
+        parent[node] = null;
+    }
+
+    dist[src] = 0;
+
+    const edges = [];
+
+    for (let u in graph) {
+
+        graph[u].forEach(edge => {
+            edges.push([u, edge.node, edge.weight]);
+        });
+    }
+
+    for (let i = 0; i < Object.keys(graph).length - 1; i++) {
+
+        edges.forEach(edge => {
+
+            const [u, v, w] = edge;
+
+            if (dist[u] !== Infinity &&
+                dist[u] + w < dist[v]) {
+
+                dist[v] = dist[u] + w;
+                parent[v] = u;
+            }
+        });
+    }
+
+    return {
+        path: reconstructPath(parent, dest),
+        distance: dist[dest]
+    };
+}
+
+// ---------------- A* ----------------
+
+function heuristic(a, b) {
+    return Math.abs(a - b);
+}
+
+function aStar(src, dest) {
+
+    const openSet = [src];
+
+    const gScore = {};
+    const fScore = {};
+    const parent = {};
+
+    for (let node in graph) {
+        gScore[node] = Infinity;
+        fScore[node] = Infinity;
+        parent[node] = null;
+    }
+
+    gScore[src] = 0;
+    fScore[src] = heuristic(src, dest);
+
+    while (openSet.length > 0) {
+
+        let current = openSet[0];
+
+        for (let node of openSet) {
+
+            if (fScore[node] < fScore[current]) {
+                current = node;
+            }
+        }
+
+        if (current == dest) {
+
+            return {
+                path: reconstructPath(parent, dest),
+                distance: gScore[dest]
+            };
+        }
+
+        openSet.splice(openSet.indexOf(current), 1);
+
+        graph[current].forEach(edge => {
+
+            const tentative =
+                gScore[current] + edge.weight;
+
+            if (tentative < gScore[edge.node]) {
+
+                parent[edge.node] = current;
+
+                gScore[edge.node] = tentative;
+
+                fScore[edge.node] =
+                    tentative +
+                    heuristic(edge.node, dest);
+
+                if (!openSet.includes(edge.node.toString())) {
+                    openSet.push(edge.node.toString());
+                }
+            }
+        });
+    }
+
+    return {
+        path: "No Path",
+        distance: Infinity
+    };
+}
+
+// ---------------- RUN FUNCTIONS ----------------
+
+function displayResult(name, data) {
 
     document.getElementById("output").innerText =
-        `DIJKSTRA\n\nPath: ${data.result.path}\nDistance: ${data.result.distance}\nExecution Time: ${data.time} ms`;
+        `${name}
+
+Path: ${data.result.path}
+
+Distance: ${data.result.distance}
+
+Execution Time: ${data.time} ms`;
+}
+
+function runDijkstra() {
+
+    const src =
+        document.getElementById("source").value;
+
+    const dest =
+        document.getElementById("destination").value;
+
+    const data =
+        measureTime(() => dijkstra(src, dest));
+
+    displayResult("DIJKSTRA", data);
 }
 
 function runBellmanFord() {
 
-    const src = document.getElementById("source").value;
-    const dest = document.getElementById("destination").value;
+    const src =
+        document.getElementById("source").value;
 
-    const data = measureTime(() => bellmanFord(src, dest));
+    const dest =
+        document.getElementById("destination").value;
 
-    document.getElementById("output").innerText =
-        `BELLMAN-FORD\n\nPath: ${data.result.path}\nDistance: ${data.result.distance}\nExecution Time: ${data.time} ms`;
+    const data =
+        measureTime(() => bellmanFord(src, dest));
+
+    displayResult("BELLMAN-FORD", data);
+}
+
+function runAStar() {
+
+    const src =
+        document.getElementById("source").value;
+
+    const dest =
+        document.getElementById("destination").value;
+
+    const data =
+        measureTime(() => aStar(src, dest));
+
+    displayResult("A* ALGORITHM", data);
 }
