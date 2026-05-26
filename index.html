@@ -10,7 +10,7 @@
 
 <div class="container">
 
-    <h1>Delay-Aware Route Planner</h1>
+    <h1>🚦 Delay-Aware Route Planner</h1>
 
     <!-- Add Edge -->
     <div class="card">
@@ -23,9 +23,9 @@
         <button onclick="addEdge()">Add Edge</button>
     </div>
 
-    <!-- Delay -->
+    <!-- Add Delay -->
     <div class="card">
-        <h2>Add Delay</h2>
+        <h2>Apply Delay</h2>
 
         <input type="number" id="delayFrom" placeholder="From Node">
         <input type="number" id="delayTo" placeholder="To Node">
@@ -41,8 +41,11 @@
         <input type="number" id="source" placeholder="Source">
         <input type="number" id="destination" placeholder="Destination">
 
-        <button onclick="runDijkstra()">Run Dijkstra</button>
-        <button onclick="runBellmanFord()">Run Bellman-Ford</button>
+        <div class="buttons">
+            <button onclick="runDijkstra()">Run Dijkstra</button>
+            <button onclick="runBellmanFord()">Run Bellman-Ford</button>
+            <button onclick="runAStar()">Run A*</button>
+        </div>
     </div>
 
     <!-- Output -->
