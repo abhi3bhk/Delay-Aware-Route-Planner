@@ -1,10 +1,10 @@
-# 🚦 Delay-Aware Route Planner
+#  Delay-Aware Route Planner
 
 A graph-based route planning and algorithm analysis system that studies how shortest path algorithms behave under dynamic delay conditions.
 
 ---
 
-# 📌 Project Overview
+#  Project Overview
 
 This project models a road network as a graph where:
 
@@ -16,7 +16,7 @@ The system dynamically simulates traffic delay by increasing edge weights and re
 
 ---
 
-# ✨ Features
+#  Features
 
 ✅ Graph representation using adjacency list  
 ✅ Dynamic delay simulation  
@@ -27,9 +27,9 @@ The system dynamically simulates traffic delay by increasing edge weights and re
 
 ---
 
-# 🧠 Algorithms Implemented
+#  Algorithms Implemented
 
-## 1️⃣ Dijkstra Algorithm
+## 1️. Dijkstra Algorithm
 - Greedy approach
 - Uses priority queue
 - Fastest for non-negative weights
@@ -39,7 +39,7 @@ O((V + E) log V)
 
 ---
 
-## 2️⃣ Bellman-Ford Algorithm
+## 2️. Bellman-Ford Algorithm
 - Repeated edge relaxation
 - Supports negative weights
 - Used for comparison and analysis
@@ -49,7 +49,7 @@ O(VE)
 
 ---
 
-## 3️⃣ A* Algorithm
+## 3️. A* Algorithm
 - Heuristic-based search
 - Optimized shortest path search
 - Uses estimated distance to destination
@@ -59,7 +59,7 @@ Depends on heuristic quality
 
 ---
 
-# 📊 Comparison Parameters
+#  Comparison Parameters
 
 The algorithms are compared based on:
 
@@ -69,7 +69,7 @@ The algorithms are compared based on:
 
 ---
 
-# 🧩 DAA Concepts Used
+#  DAA Concepts Used
 
 - Graphs
 - Adjacency List
@@ -80,7 +80,7 @@ The algorithms are compared based on:
 
 ---
 
-# 🌐 Technologies Used
+#  Technologies Used
 
 ## Frontend
 - HTML
@@ -92,7 +92,7 @@ The algorithms are compared based on:
 
 ---
 
-# 🚀 Future Scope
+#  Future Scope
 
 - Real-time traffic integration
 - Emergency vehicle routing
@@ -102,7 +102,7 @@ The algorithms are compared based on:
 
 ---
 
-# 👨‍💻 Team Members
+#  Team Members
 
 | Name | Roll Number | Section |
 |---|---|---|
