@@ -18,12 +18,12 @@ The system dynamically simulates traffic delay by increasing edge weights and re
 
 #  Features
 
--> Graph representation using adjacency list  
--> Dynamic delay simulation  
--> Real-time shortest path recalculation  
--> Execution time comparison  
--> Interactive web interface  
--> Multiple shortest path algorithms  
+- Graph representation using adjacency list  
+- Dynamic delay simulation  
+- Real-time shortest path recalculation  
+- Execution time comparison  
+- Interactive web interface  
+- Multiple shortest path algorithms  
 
 ---
 
