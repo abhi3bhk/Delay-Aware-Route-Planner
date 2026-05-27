@@ -4,61 +4,54 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Delay-Aware Route Planner</title>
+
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<div class="container">
+    <div class="container">
 
-    <h1>🚦 Delay-Aware Route Planner</h1>
+        <h1>🚦 Delay-Aware Route Planner</h1>
 
-    <!-- Add Edge -->
-    <div class="card">
-        <h2>Add Edge</h2>
+        <!-- ADD EDGE -->
+        <div class="card">
 
-        <input type="number" id="from" placeholder="From Node">
-        <input type="number" id="to" placeholder="To Node">
-        <input type="number" id="weight" placeholder="Weight">
+            <h2>Add Edge</h2>
 
-        <button onclick="addEdge()">Add Edge</button>
-    </div>
+            <input type="number" id="fromNode" placeholder="From Node">
+            <input type="number" id="toNode" placeholder="To Node">
+            <input type="number" id="weight" placeholder="Weight">
 
-    <!-- Add Delay -->
-    <div class="card">
-        <h2>Apply Delay</h2>
-
-        <input type="number" id="delayFrom" placeholder="From Node">
-        <input type="number" id="delayTo" placeholder="To Node">
-        <input type="number" id="delayValue" placeholder="Delay">
-
-        <button onclick="applyDelay()">Apply Delay</button>
-    </div>
-
-    <!-- Route -->
-    <div class="card">
-        <h2>Find Route</h2>
-
-        <input type="number" id="source" placeholder="Source">
-        <input type="number" id="destination" placeholder="Destination">
-
-        <div class="buttons">
-            <button onclick="runDijkstra()">Run Dijkstra</button>
-            <button onclick="runBellmanFord()">Run Bellman-Ford</button>
-            <button onclick="runAStar()">Run A*</button>
+            <button onclick="addEdge()">
+                Add Edge
+            </button>
         </div>
-    </div>
 
-    <!-- Output -->
-    <div class="card">
-        <h2>Output</h2>
+        <!-- APPLY DELAY -->
+        <div class="card">
 
-        <div id="output">
-            Results will appear here...
+            <h2>Apply Delay</h2>
+
+            <input type="number" id="delayFrom" placeholder="From Node">
+            <input type="number" id="delayTo" placeholder="To Node">
+            <input type="number" id="delayValue" placeholder="Delay">
+
+            <button onclick="applyDelay()">
+                Apply Delay
+            </button>
         </div>
-    </div>
 
-</div>
+        <!-- FIND ROUTE -->
+        <div class="card">
 
-<script src="script.js"></script>
-</body>
+            <h2>Find Route</h2>
+
+            <input type="number" id="source" placeholder="Source">
+            <input type="number" id="destination" placeholder="Destination">
+
+            <div class="button-group">
+                <button onclick="runDijkstra()">
+                    Run Dijkstra
+                </button>
+
 </html>
