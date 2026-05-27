@@ -1,57 +1,136 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Delay-Aware Route Planner</title>
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>
+        Delay-Aware Route Planner
+    </title>
 
     <link rel="stylesheet" href="style.css">
+
 </head>
+
 <body>
 
-    <div class="container">
+<div class="container">
 
-        <h1>🚦 Delay-Aware Route Planner</h1>
+    <h1>
+        🚦 Delay-Aware Route Planner
+    </h1>
 
-        <!-- ADD EDGE -->
-        <div class="card">
+    <!-- ADD EDGE -->
 
-            <h2>Add Edge</h2>
+    <div class="card">
 
-            <input type="number" id="fromNode" placeholder="From Node">
-            <input type="number" id="toNode" placeholder="To Node">
-            <input type="number" id="weight" placeholder="Weight">
+        <h2>Add Edge</h2>
 
-            <button onclick="addEdge()">
-                Add Edge
+        <input type="number"
+               id="fromNode"
+               placeholder="From Node">
+
+        <input type="number"
+               id="toNode"
+               placeholder="To Node">
+
+        <input type="number"
+               id="weight"
+               placeholder="Weight">
+
+        <button onclick="addEdge()">
+            Add Edge
+        </button>
+
+    </div>
+
+    <!-- APPLY DELAY -->
+
+    <div class="card">
+
+        <h2>Apply Delay</h2>
+
+        <input type="number"
+               id="delayFrom"
+               placeholder="From Node">
+
+        <input type="number"
+               id="delayTo"
+               placeholder="To Node">
+
+        <input type="number"
+               id="delayValue"
+               placeholder="Delay">
+
+        <button onclick="applyDelay()">
+            Apply Delay
+        </button>
+
+    </div>
+
+    <!-- RUN ALGORITHMS -->
+
+    <div class="card">
+
+        <h2>Find Route</h2>
+
+        <input type="number"
+               id="source"
+               placeholder="Source">
+
+        <input type="number"
+               id="destination"
+               placeholder="Destination">
+
+        <div class="buttons">
+
+            <button onclick="runDijkstra()">
+                Run Dijkstra
             </button>
+
+            <button onclick="runBellmanFord()">
+                Run Bellman-Ford
+            </button>
+
+            <button onclick="runAStar()">
+                Run A*
+            </button>
+
         </div>
 
-        <!-- APPLY DELAY -->
-        <div class="card">
+    </div>
 
-            <h2>Apply Delay</h2>
+    <!-- GRAPH -->
 
-            <input type="number" id="delayFrom" placeholder="From Node">
-            <input type="number" id="delayTo" placeholder="To Node">
-            <input type="number" id="delayValue" placeholder="Delay">
+    <div class="card">
 
-            <button onclick="applyDelay()">
-                Apply Delay
-            </button>
+        <h2>Current Graph</h2>
+
+        <div id="graphDisplay">
+            No graph created yet...
         </div>
 
-        <!-- FIND ROUTE -->
-        <div class="card">
+    </div>
 
-            <h2>Find Route</h2>
+    <!-- OUTPUT -->
 
-            <input type="number" id="source" placeholder="Source">
-            <input type="number" id="destination" placeholder="Destination">
+    <div class="card">
 
-            <div class="button-group">
-                <button onclick="runDijkstra()">
-                    Run Dijkstra
-                </button>
+        <h2>Output</h2>
 
+        <div id="output">
+            Results will appear here...
+        </div>
+
+    </div>
+
+</div>
+
+<script src="script.js"></script>
+
+</body>
 </html>
